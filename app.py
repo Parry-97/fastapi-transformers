@@ -8,7 +8,7 @@ app.include_router(router=text_gen_router)
 
 
 def main():
-    uvicorn.run(app=app, port=5000)
+    uvicorn.run(app=app, port=80)
 
 
 if __name__ == "__main__":
