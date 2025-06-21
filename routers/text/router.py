@@ -9,7 +9,7 @@ router = APIRouter(prefix="/text")
 
 
 def text_gen_pipeline() -> Pipeline:
-    return pipeline("text-generation")
+    return pipeline("text-generation", model="HuggingFaceTB/SmolLM2-360M")
 
 
 @router.post("/simple-gen")

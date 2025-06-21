@@ -9,4 +9,4 @@ RUN uv sync --locked --all-extras
 # Copy the remainder of the application code
 COPY . .
 
-CMD ["uv","run","app/main.py"]
+CMD ["uv","run","app.py"]
