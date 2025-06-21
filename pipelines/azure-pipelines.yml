@@ -1,0 +1,40 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: "ubuntu-latest"
+
+stages:
+  - stage: Test
+    jobs:
+      - job: RunTests
+        displayName: "Run Pytest"
+        steps:
+          - checkout: self
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: "3.10"
+          - script: python -m pip install --upgrade pip
+            displayName: "Upgrade pip"
+          - script: pip install -r requirements.txt
+            displayName: "Install dependencies"
+          - script: pip install pytest
+            displayName: "Install pytest"
+          - script: pytest tests
+            displayName: "Run tests"
+
+  - stage: Deploy
+    dependsOn: Test
+    condition: succeeded()
+    jobs:
+      - deployment: DeployPythonApp
+        displayName: "Deploy to Production"
+        environment: "production" # <===== This is your tracked environment
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: echo "Deploying Python app to production..."
+                  displayName: "Deploy step"
