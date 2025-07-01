@@ -1,25 +1,25 @@
 resource "azurerm_resource_group" "main_rg" {
   name     = var.rg_name
-  location = "West Europe"
+  location = var.location
 }
 
 resource "azurerm_container_registry" "acr" {
   name                = var.acr_name
   resource_group_name = azurerm_resource_group.main_rg.name
   location            = azurerm_resource_group.main_rg.location
-  sku                 = "Premium"
+  sku                 = "Basic"
 }
 
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                = var.aks_name
   location            = azurerm_resource_group.main_rg.location
   resource_group_name = azurerm_resource_group.main_rg.name
-  dns_prefix          = "exampleaks1"
+  dns_prefix          = var.aks_name
 
   default_node_pool {
-    name       = "default"
+    name       = var.aks_node_pool_name
+    vm_size    = "Standard_B2s"
     node_count = 1
-    vm_size    = "Standard_D2_v2"
   }
 
   identity {
@@ -27,7 +27,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   tags = {
-    Environment = "Production"
+    Environment = "Development"
   }
 }
 
