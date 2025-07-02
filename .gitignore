@@ -11,4 +11,4 @@ wheels/
 
 # Terraform
 .terraform
-*.tfstate
+*.tfstate*
