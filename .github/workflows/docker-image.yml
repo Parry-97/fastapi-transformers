@@ -21,9 +21,17 @@ jobs:
         run: uv sync --locked --all-extras --dev
 
       - name: Run tests
-        # For example, using `pytest`
         run: uv run pytest
 
-      - name: Build the Image
-        run: docker buildx build -t fastapi-tf .
-      # - uses: Azure/acr-build@v1
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        run: az acr login --name myregistry
+
+      - name: Build and push Docker image
+        run: |
+          docker buildx build -t myregistry.azurecr.io/myapp:${{ github.sha }} .
+          docker push myregistry.azurecr.io/myapp:${{ github.sha }}

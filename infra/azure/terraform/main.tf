@@ -1,3 +1,9 @@
+# Data definitions
+data "azurerm_client_config" "current" {}
+
+
+
+# Resource definitions
 resource "azurerm_resource_group" "main_rg" {
   name     = var.rg_name
   location = var.location
@@ -34,6 +40,15 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 resource "azurerm_role_assignment" "aks_acr_role_assignment" {
   principal_id                     = azurerm_kubernetes_cluster.aks_cluster.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.acr.id
+  skip_service_principal_aad_check = true
+}
+
+
+
+resource "azurerm_role_assignment" "sp_acr_role_assignment" {
+  principal_id                     = data.azurerm_client_config.current.object_id
+  role_definition_name             = "AcrPush"
   scope                            = azurerm_container_registry.acr.id
   skip_service_principal_aad_check = true
 }
