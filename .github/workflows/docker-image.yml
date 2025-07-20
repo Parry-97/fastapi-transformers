@@ -23,15 +23,20 @@ jobs:
       - name: Run tests
         run: uv run pytest
 
+  acr-push:
+    name: acr-push
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Login to ACR
-        run: az acr login --name myregistry
+        run: az acr login --name crhftd01
 
       - name: Build and push Docker image
         run: |
-          docker buildx build -t myregistry.azurecr.io/myapp:${{ github.sha }} .
-          docker push myregistry.azurecr.io/myapp:${{ github.sha }}
+          docker buildx build -t crhftd01.azurecr.io/myapp:${{ github.sha }} .
+          docker push crhftd01.azurecr.io/myapp:${{ github.sha }}
