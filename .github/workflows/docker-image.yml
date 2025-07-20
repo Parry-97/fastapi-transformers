@@ -7,8 +7,8 @@ on:
     branches: ["main"]
 
 jobs:
-  uv-setup:
-    name: python
+  uv-test:
+    name: uv-test
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +26,7 @@ jobs:
   acr-push:
     name: acr-push
     runs-on: ubuntu-latest
+    needs: uv-test
 
     steps:
       - uses: actions/checkout@v4
