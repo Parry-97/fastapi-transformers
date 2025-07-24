@@ -10,7 +10,7 @@ module "app_backend" {
     azurerm = azurerm.azure
   }
   pep_snet_id = module.app_networking.subnet_ids[1]
-  depends_on  = [module.app_networking]
+  rg_name     = azurerm_resource_group.main_rg.name
 }
 
 
@@ -19,4 +19,5 @@ module "app_networking" {
   providers = {
     azurerm = azurerm.azure
   }
+  rg_name = azurerm_resource_group.main_rg.name
 }
