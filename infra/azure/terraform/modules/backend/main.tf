@@ -1,12 +1,20 @@
 # Data definitions
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_container_registry" "acr" {
+module "avm-res-containerregistry-registry" {
+  source              = "Azure/avm-res-containerregistry-registry/azurerm"
+  version             = "0.4.0"
   name                = var.acr_name
   resource_group_name = var.rg_name
-  location            = var.location
-  sku                 = "Standard"
+  private_endpoints = {
+    acr_pep_01 = {
+      subnet_resource_id = var.pep_snet_id
+
+    }
+  }
+  location = var.location
 }
+
 
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                = var.aks_name
@@ -32,15 +40,14 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
 resource "azurerm_role_assignment" "aks_acr_role_assignment" {
   principal_id                     = azurerm_kubernetes_cluster.aks_cluster.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
-  scope                            = azurerm_container_registry.acr.id
+  scope                            = module.avm-res-containerregistry-registry.resource_id
   skip_service_principal_aad_check = true
 }
-
 
 
 resource "azurerm_role_assignment" "sp_acr_role_assignment" {
   principal_id                     = data.azurerm_client_config.current.object_id
   role_definition_name             = "AcrPush"
-  scope                            = azurerm_container_registry.acr.id
+  scope                            = module.avm-res-containerregistry-registry.resource_id
   skip_service_principal_aad_check = true
 }

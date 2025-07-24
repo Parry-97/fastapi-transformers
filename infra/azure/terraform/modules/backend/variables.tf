@@ -29,3 +29,8 @@ variable "rg_name" {
   type        = string
   default     = "rg-we-hft-d-01"
 }
+
+variable "pep_snet_id" {
+  type        = string
+  description = "Resource ID for the Subnet containing private endpoints"
+}
