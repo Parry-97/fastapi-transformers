@@ -22,3 +22,18 @@ variable "vnet_address_space" {
   type        = list(string)
   description = "Address space for the Virtual Network"
 }
+
+
+variable "subnets" {
+  default = {
+    snet-we-hft-d-01 = {
+      address_prefixes = ["10.0.1.0/24"]
+    }
+    snet-we-hft-d-02 = {
+      address_prefixes = ["10.0.2.0/24"]
+    }
+  }
+  type = map(object({
+    address_prefixes = list(string)
+  }))
+}
