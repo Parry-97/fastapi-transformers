@@ -35,6 +35,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   tags = {
     Environment = "Development"
   }
+  role_based_access_control_enabled = true
 }
 
 resource "azurerm_role_assignment" "aks_acr_role_assignment" {
