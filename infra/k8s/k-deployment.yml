@@ -24,7 +24,6 @@ spec:
       containers:
         - name: myapp
           image: crhftd01.azurecr.io/myapp:latest
-          imagePullPolicy: Never
       restartPolicy: Always
 ---
 
