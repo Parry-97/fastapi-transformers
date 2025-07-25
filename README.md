@@ -8,6 +8,7 @@ A minimal FastAPI web API for text generation using Hugging Face Transformers mo
 - FastAPI-based, easily extendable and documented (provides OpenAPI/Swagger docs out of the box)
 - Configured for easy Docker deployment using [uv](https://github.com/astral-sh/uv) for ultra-fast Python package management
 - Works with PyTorch (CPU) by default
+- Infrastructure-as-code for Azure provisioning using Terraform, with Kubernetes manifests for AKS-based app deployment
 
 ## Requirements
 
@@ -98,6 +99,49 @@ curl -X POST http://localhost/text/simple-gen -H 'Content-Type: application/json
 
 - To add new pipelines, add more routes in `routers/text/router.py` using FastAPI and the Hugging Face pipelines.
 - To change the default model, override the `pipeline("text-generation")` call in the same file with your desired model, e.g. `pipeline("text-generation", model="gpt2")`.
+
+## Infrastructure Deployment
+
+### Azure Infrastructure via Terraform
+
+The Terraform configurations are located at `infra/azure/terraform` and provision the following Azure resources:
+- Resource Group
+- Azure Container Registry (ACR)
+- Azure Kubernetes Service (AKS) cluster
+
+To deploy the infrastructure, ensure you have the Azure CLI installed and are logged in:
+```bash
+az login
+```
+Then, from the Terraform directory:
+```bash
+cd infra/azure/terraform
+terraform init
+terraform plan -out=tfplan
+terraform apply tfplan
+```
+
+After deployment, view the outputs (e.g., resource group and AKS cluster names):
+```bash
+terraform output
+```
+
+### Accessing the AKS Cluster
+
+Configure `kubectl` to connect to the new AKS cluster:
+```bash
+az aks get-credentials --resource-group $(terraform output -raw rg_name) --name $(terraform output -raw aks_name)
+kubectl get nodes
+```
+
+### Deploying the Application on AKS
+
+The Kubernetes manifest is located at `infra/k8s/k-deployment.yml`. Review and adjust the `image` field to match your ACR, then deploy:
+```bash
+kubectl apply -f infra/k8s/k-deployment.yml
+kubectl rollout status deployment/myapp
+kubectl get pods,svc
+```
 
 ## License
 
