@@ -16,19 +16,12 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         name: Terraform setup
 
-      - run: cd infra/azure/terraform
-
-      - id: init
-        run: terraform init
-        name: Terraform init
-
-      - id: validate
-        run: terraform validate
-        name: Terraform Validate
-
       - id: plan
-        run: terraform plan -no-color
-        name: Terraform Plan
+        run: |
+          cd infra/azure/terraform
+          terraform init
+          terraform validate
+          terraform plan -no-color
 
       - run: echo ${{ steps.plan.outputs.stdout }}
         name: Print Outputs
