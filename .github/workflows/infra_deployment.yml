@@ -17,6 +17,9 @@ jobs:
         name: Terraform setup
 
       - id: plan
+        name: Terraform Plan
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
         run: |
           cd infra/azure/terraform
           terraform init
