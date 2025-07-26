@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my‐app‐lb
+  name: myapplb
   # annotations:
   # (optional) if you want an *internal* LB in a private vnet:
   # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
