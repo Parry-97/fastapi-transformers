@@ -16,7 +16,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         name: Terraform setup
 
-      - run: cd infra/terraform/azure
+      - run: cd infra/azure/terraform
 
       - id: init
         run: terraform init
