@@ -37,6 +37,7 @@ jobs:
     needs: terraform-ci
     runs-on: ubuntu-latest
     name: Terraform apply
+    environment: tf-deploy
     steps:
       - uses: actions/checkout@v4
 
