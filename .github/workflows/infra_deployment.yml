@@ -8,7 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Azure Login
+      - id: az-login
+        name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -18,10 +19,44 @@ jobs:
 
       - id: plan
         name: Terraform Plan
+        working-directory: infra/azure/terraform
         env:
           ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
         run: |
-          cd infra/azure/terraform
           terraform init
           terraform validate
-          terraform plan -no-color
+          terraform plan -no-color -out tf-plan
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: infra/azure/terraform/tf.plan
+
+  terraform-apply:
+    needs: terraform-ci
+    runs-on: ubuntu-latest
+    name: Terraform apply
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download plan artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: hashicorp/setup-terraform@v3
+        name: Terraform setup
+
+      - id: apply
+        name: Terraform Apply
+        working-directory: infra/azure/terraform
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+        run: |
+          terraform apply --auto-approve
