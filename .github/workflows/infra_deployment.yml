@@ -25,12 +25,3 @@ jobs:
           terraform init
           terraform validate
           terraform plan -no-color
-
-      - run: ${{ steps.plan.outputs.stdout }}
-        name: Print Outputs
-
-      - run: ${{ steps.plan.outputs.stderr }}
-        name: Print Errors
-
-      - run: ${{ steps.plan.outputs.exitcode }}
-        name: Print exitcode
