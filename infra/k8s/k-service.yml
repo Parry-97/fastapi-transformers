@@ -1,0 +1,20 @@
+# https://kubernetes.io/docs/concepts/services-networking/service/
+apiVersion: v1
+kind: Service
+metadata:
+  name: my‐app‐lb
+  # annotations:
+  # (optional) if you want an *internal* LB in a private vnet:
+  # service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  # (optional) to ask for a specific Public IP (must already exist in that RG):
+  # service.beta.kubernetes.io/azure-pip-name: "myStaticPublicIP"
+spec:
+  type: LoadBalancer
+  selector:
+    app: myapp
+  ports:
+    - protocol: TCP
+      port: 80 # client‐facing port
+      targetPort: 8000
+---
+
