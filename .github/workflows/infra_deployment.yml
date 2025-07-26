@@ -25,13 +25,13 @@ jobs:
         run: |
           terraform init
           terraform validate
-          terraform plan -no-color -out tf-plan
+          terraform plan -no-color -out tf.plan
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan
-          path: infra/azure/terraform/tf-plan
+          name: tf.plan
+          path: infra/azure/terraform/tf.plan
 
   terraform-apply:
     needs: terraform-ci
@@ -41,11 +41,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download plan artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: tfplan
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -54,10 +49,16 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         name: Terraform setup
 
+      - name: Download plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tf.plan
+          path: infra/azure/terraform
+
       - id: apply
         name: Terraform Apply
         working-directory: infra/azure/terraform
         env:
           ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
         run: |
-          terraform apply --auto-approve tfplan
+          terraform apply --auto-approve tf.plan
