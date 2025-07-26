@@ -1,0 +1,35 @@
+name: Terraform Infrastructure Deployment
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-ci:
+    name: Terraform CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: hashicorp/setup-terraform@v3
+        name: Terraform setup
+
+      - run: terraform init
+        name: Terraform init
+
+      - id: Terraform Validate
+        run: terraform validate
+
+      - id: Terraform Plan
+        run: terraform plan -no-color
+
+      - run: echo ${{ steps.plan.outputs.stdout }}
+        name: Print Outputs
+
+      - run: echo ${{ steps.plan.outputs.stderr }}
+        name: Print Errors
+
+      - run: echo ${{ steps.plan.outputs.exitcode }}
+        name: Print exitcode
