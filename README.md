@@ -136,12 +136,18 @@ kubectl get nodes
 
 ### Deploying the Application on AKS
 
-The Kubernetes manifest is located at `infra/k8s/k-deployment.yml`. Review and adjust the `image` field to match your ACR, then deploy:
+The Kubernetes manifests are located at `infra/k8s/k-deployment.yml` (for the app) and `infra/k8s/k-service.yml` (for the load balancer). Review and adjust the `image` field to match your ACR, then deploy:
 ```bash
 kubectl apply -f infra/k8s/k-deployment.yml
 kubectl rollout status deployment/myapp
-kubectl get pods,svc
-```
+
+# Deploy and expose via LoadBalancer service
+kubectl apply -f infra/k8s/k-service.yml
+
+# Verify pods and service
+kubectl get pods
+kubectl get svc myapplb
+``` 
 
 ## License
 
