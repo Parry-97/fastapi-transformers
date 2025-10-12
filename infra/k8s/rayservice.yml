@@ -1,0 +1,59 @@
+# This RayService manifest is configured for the fastapi-transformers project.
+# IMPORTANT: The Ray version specified (2.46.0) is not compatible with Python 3.13.
+# Please downgrade the project's Python version to 3.11 and ensure the Docker image
+# 'crhftd01.azurecr.io/myapp:latest' is built with a compatible Python version.
+
+apiVersion: ray.io/v1
+kind: RayService
+metadata:
+  name: fastapi-transformer-service
+spec:
+  serveConfigV2:
+    applications:
+      - name: transformer-app
+        import_path: serve_app.deployment_graph
+        route_prefix: /
+        # The working_dir is not needed here as the application code
+        # will be included in the Docker image.
+
+  rayClusterConfig:
+    rayVersion: "2.46.0"
+    headGroupSpec:
+      rayStartParams: {}
+      template:
+        spec:
+          containers:
+            - name: ray-head
+              image: crhftd01.azurecr.io/myapp:latest
+              ports:
+              - containerPort: 6379
+                name: gcs-server
+              - containerPort: 8265
+                name: dashboard
+              - containerPort: 10001
+                name: client
+              resources:
+                limits:
+                  cpu: "1"
+                  memory: "2Gi"
+                requests:
+                  cpu: "500m"
+                  memory: "1Gi"
+    workerGroupSpecs:
+      - replicas: 1
+        minReplicas: 1
+        maxReplicas: 2
+        groupName: small-group
+        rayStartParams: {}
+        template:
+          spec:
+            containers:
+              - name: ray-worker
+                image: crhftd01.azurecr.io/myapp:latest
+                resources:
+                  limits:
+                    cpu: "1"
+                    memory: "2Gi"
+                  requests:
+                    cpu: "500m"
+                    memory: "1Gi"
