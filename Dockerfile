@@ -2,17 +2,19 @@
 # Note: Ray 2.50.0 is specified in pyproject.toml
 FROM rayproject/ray:2.50.0-py311
 
-# Copy uv for fast Python package management
-COPY --from=ghcr.io/astral-sh/uv:0.7.13 /uv /uvx /bin/
-
+# Set working directory
 WORKDIR /app
 
 # Copy dependency files
 COPY pyproject.toml uv.lock* ./
 
-# Install dependencies using uv
-# Ray is already installed in the base image, so we install additional deps
-RUN uv sync --no-group dev
+# Install dependencies using pip (Ray's Python environment)
+# We use pip instead of uv to ensure packages are installed in Ray's environment
+RUN pip install --no-cache-dir \
+    fastapi[standard]>=0.115.13 \
+    torch>=2.7.1 --extra-index-url https://download.pytorch.org/whl/cpu \
+    transformers>=4.52.4 \
+    uvicorn>=0.34.3
 
 # Copy the application code
 COPY . .

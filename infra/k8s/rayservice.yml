@@ -14,9 +14,8 @@ spec:
       - name: transformer-app
         import_path: serve_app:deployment_graph
         route_prefix: /
-        runtime_env:
-          working_dir: "."
-    # Working directory is set to current directory since code is in the image
+        runtime_env: {}
+    # Note: runtime_env is empty since the application code is baked into the Docker image
 
   rayClusterConfig:
     rayVersion: "2.50.0"
