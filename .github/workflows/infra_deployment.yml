@@ -64,7 +64,20 @@ jobs:
           terraform init
           terraform apply --auto-approve tf.plan
 
+      - name: Read Terraform outputs (rg_name, aks_name)
+        working-directory: infra/azure/terraform
+        id: tf-outs
+        run: |
+          echo "RG_NAME=$(terraform output -raw rg_name)" >> $GITHUB_OUTPUT
+          echo "AKS_NAME=$(terraform output -raw aks_name)" >> $GITHUB_OUTPUT
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --resource-group "${{ steps.tf-outs.outputs.RG_NAME }}" \
+            --name "${{ steps.tf-outs.outputs.AKS_NAME }}" \
+            --overwrite-existing
+
       - name: Deploy Ray Service
         run: |
-          az aks get-credentials --resource-group rg-we-hft-d-01 --name aks-we-hft-d-01 --overwrite-existing
           kubectl apply -f infra/k8s/rayservice.yml

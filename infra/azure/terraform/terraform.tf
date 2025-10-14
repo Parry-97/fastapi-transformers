@@ -24,3 +24,21 @@ provider "azurerm" {
     }
   }
 }
+
+# Kubernetes provider configured to use AKS cluster credentials
+provider "kubernetes" {
+  host                   = module.app_backend.kube_config[0].host
+  client_certificate     = base64decode(module.app_backend.kube_config[0].client_certificate)
+  client_key             = base64decode(module.app_backend.kube_config[0].client_key)
+  cluster_ca_certificate = base64decode(module.app_backend.kube_config[0].cluster_ca_certificate)
+}
+
+# Helm provider configured to use the same Kubernetes connection
+provider "helm" {
+  kubernetes {
+    host                   = module.app_backend.kube_config[0].host
+    client_certificate     = base64decode(module.app_backend.kube_config[0].client_certificate)
+    client_key             = base64decode(module.app_backend.kube_config[0].client_key)
+    cluster_ca_certificate = base64decode(module.app_backend.kube_config[0].cluster_ca_certificate)
+  }
+}
