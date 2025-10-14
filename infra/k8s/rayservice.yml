@@ -1,7 +1,6 @@
 # This RayService manifest is configured for the fastapi-transformers project.
-# IMPORTANT: The Ray version specified (2.46.0) is not compatible with Python 3.13.
-# Please downgrade the project's Python version to 3.11 and ensure the Docker image
-# 'crhftd01.azurecr.io/myapp:latest' is built with a compatible Python version.
+# Uses Ray 2.50.0 with Python 3.11 (matches the Dockerfile and pyproject.toml)
+# The Docker image includes Ray, the application code, and all dependencies.
 
 apiVersion: ray.io/v1
 kind: RayService
@@ -20,7 +19,7 @@ spec:
     # Working directory is set to current directory since code is in the image
 
   rayClusterConfig:
-    rayVersion: "2.46.0"
+    rayVersion: "2.50.0"
     headGroupSpec:
       rayStartParams: {}
       template:
