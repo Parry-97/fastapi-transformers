@@ -22,16 +22,6 @@ module "app_networking" {
   rg_name = azurerm_resource_group.main_rg.name
 }
 
-# Helm provider configuration for Kubernetes
-provider "helm" {
-  kubernetes {
-    host                   = module.app_backend.kube_config[0].host
-    client_certificate     = base64decode(module.app_backend.kube_config[0].client_certificate)
-    client_key             = base64decode(module.app_backend.kube_config[0].client_key)
-    cluster_ca_certificate = base64decode(module.app_backend.kube_config[0].cluster_ca_certificate)
-  }
-}
-
 # KubeRay operator Helm release
 resource "helm_release" "kuberay_operator" {
   name             = "kuberay-operator"
