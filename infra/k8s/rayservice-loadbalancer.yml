@@ -1,0 +1,18 @@
+# LoadBalancer service to expose the Ray Serve application externally
+# This service routes external traffic on port 80 to the Ray Serve HTTP proxy on port 8000
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-transformer-lb
+  labels:
+    app: fastapi-transformers
+spec:
+  type: LoadBalancer
+  selector:
+    # Select the Ray head pod where the Serve application is running
+    ray.io/node-type: head
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP
