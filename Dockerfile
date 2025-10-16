@@ -19,9 +19,9 @@ RUN pip install --no-cache-dir \
 # Copy the application code
 COPY . .
 
-# Pre-download the GPT-2 model to avoid downloading on first request
-# This downloads the model (~500MB) during build time
-RUN python -c "from transformers import pipeline; pipeline('text-generation', model='gpt2')"
+# Pre-download the DistilGPT-2 model to avoid downloading on first request
+# This downloads the smaller model (~240MB) during build time
+RUN python -c "from transformers import pipeline; pipeline('text-generation', model='distilgpt2')"
 
 # Ray will manage the startup command via RayService/RayCluster manifests
 # No CMD needed as Ray operator handles process management

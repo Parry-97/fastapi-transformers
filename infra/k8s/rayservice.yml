@@ -36,10 +36,10 @@ spec:
               resources:
                 limits:
                   cpu: "1"
-                  memory: "2Gi"
+                  memory: "3Gi"
                 requests:
                   cpu: "500m"
-                  memory: "1Gi"
+                  memory: "1536Mi"
     workerGroupSpecs:
       - replicas: 1
         minReplicas: 1

@@ -17,7 +17,7 @@ app = FastAPI()
 class TextGenService:
     def __init__(self):
         # Load the text generation pipeline when the deployment is initialized.
-        self._pipeline: Pipeline = pipeline("text-generation")
+        self._pipeline: Pipeline = pipeline("text-generation", model="distilgpt2")
 
     @app.post("/text/simple-gen")
     def simple_gen(self, input: SimpleInput):
